@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "prompt.schema.json",
+  "title": "Промт для skill /anatomy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "summary", "format", "size", "category", "tags", "animated", "prompt", "variables", "qualityChecklist", "createdAt"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": {
+      "description": "Совпадает с именем файла без .json",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "title": { "type": "string", "minLength": 3, "maxLength": 60 },
+    "summary": {
+      "description": "Одна-две фразы для карточки: что объясняет фигура и какой объект её несёт",
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 240
+    },
+    "format": {
+      "description": "Режим вывода anatomy: svg — отдельный .svg; html — standalone HTML с живой SVG-фигурой; webgl — HTML с шейдерными слоями или 3D-режимом",
+      "enum": ["svg", "html", "webgl"]
+    },
+    "size": {
+      "description": "Размер по шкале anatomy: figure — 40–80 деталей, до часа; hero — 80–150 деталей, 2–4 часа",
+      "enum": ["figure", "hero"]
+    },
+    "category": { "type": "string", "minLength": 2 },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 2 },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "animated": { "type": "boolean" },
+    "prompt": {
+      "description": "Готовый промт. Всегда начинается с /anatomy. Переменные пишутся как {name} и должны быть объявлены в variables",
+      "type": "string",
+      "pattern": "^/anatomy\\s",
+      "minLength": 200
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "label", "default"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-zA-Z0-9]*$" },
+          "label": { "type": "string", "minLength": 2 },
+          "default": { "type": "string", "minLength": 1 },
+          "hint": { "type": "string" },
+          "options": {
+            "description": "Если задано — на сайте выпадающий список вместо поля ввода",
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 2
+          }
+        }
+      }
+    },
+    "qualityChecklist": {
+      "description": "Что проверить в результате, прежде чем принять фигуру",
+      "type": "array",
+      "items": { "type": "string", "minLength": 5 },
+      "minItems": 3
+    },
+    "example": {
+      "description": "Эталонный результат anatomy по этому промту, пути относительно public/",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dark"],
+      "properties": {
+        "dark": { "type": "string", "pattern": "^examples/.+\\.(html|svg)$" },
+        "light": { "type": "string", "pattern": "^examples/.+\\.(html|svg)$" }
+      }
+    },
+    "source": {
+      "description": "Откуда пример, если он не сгенерирован по этому промту с нуля",
+      "type": "string"
+    },
+    "createdAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+  }
+}
